@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>User Management</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+<h1>User Management</h1>
+
+<form action="http://localhost:8080/user/form" method="get">
+    <label for="option">Choose an action:</label>
+    <select name="action" id="option">
+        <option value="getUser">Get User by ID</option>
+        <option value="getAllUsers">Get All Users</option>
+        <option value="createUser">Create User</option>
+        <option value="updateUser">Update User</option>
+        <option value="deleteUser">Delete User</option>
+    </select>
+    <button type="submit">Go</button>
+</form>
+
+</body>
+</html>

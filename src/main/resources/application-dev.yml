@@ -1,0 +1,15 @@
+server:
+  port: 8080
+spring:
+  thymeleaf:
+    prefix: classpath:/templates/
+    suffix: .html
+    mode: HTML5
+    cache: false
+  datasource:
+    url: jdbc:mysql://localhost:3306/adso_thymeleaf
+    username: root
+    password: b3192621119B
+    jpa:
+      hibernate:
+        ddl-auto: update
