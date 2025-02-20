@@ -1,60 +1,86 @@
 package com.adso.thymeleaf.service;
 
 import com.adso.thymeleaf.model.User;
-import com.adso.thymeleaf.repository.IUserRepository;
-import jakarta.transaction.Transactional;
+import com.adso.thymeleaf.service.jpa.UserServiceJpa;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
 
+import static com.adso.thymeleaf.utils.Constants.ERROR_MESSAGE_ACTION_DELETE;
+import static com.adso.thymeleaf.utils.Constants.ERROR_MESSAGE_ACTION_SAVE;
+import static com.adso.thymeleaf.utils.Constants.ERROR_MESSAGE_ACTION_UPDATE;
+import static com.adso.thymeleaf.utils.Constants.MESSAGE_CREATE_USER;
+import static com.adso.thymeleaf.utils.Constants.MESSAGE_USER_ALREADY_EXISTS;
+import static com.adso.thymeleaf.utils.Constants.MESSAGE_USER_DELETED;
+import static com.adso.thymeleaf.utils.Constants.MESSAGE_USER_NOT_FOUND;
+import static com.adso.thymeleaf.utils.Constants.MESSAGE_USER_UPDATED;
+
 @Service
+@Transactional
 public class UserService implements IUserService {
 
-    private final IUserRepository userRepository;
+    private final UserServiceJpa userServiceJpa;
 
-    public UserService(IUserRepository userRepository) {
-        this.userRepository = userRepository;
+    public UserService(
+            UserServiceJpa userServiceJpa
+    ) {
+        this.userServiceJpa = userServiceJpa;
     }
 
     @Override
     public User getUserById(Long id) {
-        return userRepository.findById(id).orElse(null);
+        return userServiceJpa.findById(id).orElse(null);
     }
 
     @Override
-    @Transactional
     public List<User> getAllUsers() {
-        return userRepository.findAll();
+        return userServiceJpa.getAllUsers();
     }
 
     @Override
-    @Transactional
     public String saveUser(User user) {
-        userRepository.save(user);
-        return "User saved successfully";
+        try {
+            if (userServiceJpa.existsByEmail(user.getEmail())) {
+                return MESSAGE_USER_ALREADY_EXISTS;
+            }
+            userServiceJpa.saveUser(user);
+            return MESSAGE_CREATE_USER;
+        } catch (Exception e) {
+            return ERROR_MESSAGE_ACTION_SAVE + e.getMessage();
+        }
     }
 
     @Override
-    @Transactional
     public String deleteUser(Long id) {
-        userRepository.deleteById(id);
-        return "User deleted successfully";
+        try {
+            if (userServiceJpa.existsById(id)) {
+                userServiceJpa.deleteUser(id);
+                return MESSAGE_USER_DELETED;
+            }
+            return MESSAGE_USER_NOT_FOUND;
+        } catch (Exception e) {
+            return ERROR_MESSAGE_ACTION_DELETE + e.getMessage();
+        }
     }
 
     @Override
-    @Transactional
     public String updateUser(User user) {
-        Optional<User> update = userRepository.findById(user.getId());
+        try {
+            Optional<User> existingUser = userServiceJpa.findById(user.getId());
 
-        if (update.isPresent()) {
-            User existingUser = update.get();
-            existingUser.setName(user.getName());
-            existingUser.setEmail(user.getEmail());
-            userRepository.save(existingUser);
-            return "User updated successfully";
-        } else {
-            return "User not found";
+            if (existingUser.isPresent()) {
+                User data = existingUser.get();
+                data.setName(user.getName());
+                data.setEmail(user.getEmail());
+
+                userServiceJpa.saveUser(data);
+                return MESSAGE_USER_UPDATED;
+            }
+            return MESSAGE_USER_NOT_FOUND;
+        } catch (Exception e) {
+            return ERROR_MESSAGE_ACTION_UPDATE + e.getMessage();
         }
     }
 

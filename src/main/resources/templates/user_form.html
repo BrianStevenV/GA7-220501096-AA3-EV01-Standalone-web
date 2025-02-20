@@ -28,8 +28,8 @@
     </div>
 
 
-    <div th:if="${user == null}">
-        <p style="color: red;">User not found.</p>
+    <div th:if="${user == null and (searched != null and searched)}">
+        <p style="color: red;" th:text="${message}"></p> <!-- Muestra el mensaje desde el modelo -->
     </div>
     <div>
         <a href="http://localhost:8080">Back</a>
@@ -86,11 +86,6 @@
         <button type="submit">Search User</button>
     </form>
 
-    <div>
-        <a href="http://localhost:8080">Back</a>
-    </div>
-
-
     <div th:if="${searched}">
         <div th:if="${user != null}">
             <h3>Edit User</h3>
@@ -108,25 +103,37 @@
             </form>
         </div>
 
-        <div th:if="${user == null}">
-            <p style="color: red;">User not found.</p>
+        <div th:if="${user == null and (searched != null and searched)}">
+            <p style="color: red;" th:text="${message}"></p>
         </div>
 
-        <div>
-            <a href="http://localhost:8080">Back</a>
-        </div>
+
     </div>
 
+    <div>
+        <a href="http://localhost:8080">Back</a>
+    </div>
 </div>
 
 
 <div th:if="${action == 'deleteUser'}">
     <h2>Delete User</h2>
     <form action="/user" method="post">
+        <input type="hidden" name="_method" value="DELETE">
         <label for="deleteId">User ID:</label>
         <input type="number" id="deleteId" name="id" required>
         <button type="submit">Delete User</button>
     </form>
+
+    <div th:if="${searched != null and searched and user == null}">
+        <p style="color: red;" th:text="${message}"></p>
+    </div>
+
+    <!-- Si se eliminó correctamente -->
+    <div th:if="${searched != null and searched and user != null}">
+        <span style="color: green;" th:text="${message}"></span>
+    </div>
+
     <div>
         <a href="http://localhost:8080">Back</a>
     </div>

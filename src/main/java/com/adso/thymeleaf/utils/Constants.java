@@ -20,6 +20,14 @@ public class Constants {
 
     public static final String MESSAGE_CREATE_USER = "User created successfully!";
     public static final String MESSAGE_DELETE_USER = "User deleted successfully!";
+    public static final String MESSAGE_USER_NOT_FOUND = "User not found";
+    public static final String MESSAGE_USER_ALREADY_EXISTS = "User already exists";
+    public static final String MESSAGE_USER_DELETED = "User deleted successfully";
+    public static final String MESSAGE_USER_UPDATED = "User updated successfully";
 
-    public static final String REDIRECT = "redirect:/user.html";
+
+    public static final String ERROR_MESSAGE_ACTION_SAVE = "Error saving user: ";
+    public static final String ERROR_MESSAGE_ACTION_DELETE = "Error deleting user: ";
+    public static final String ERROR_MESSAGE_ACTION_UPDATE = "Error updating user: ";
+    public static final String REDIRECT = "redirect:/";
 }
